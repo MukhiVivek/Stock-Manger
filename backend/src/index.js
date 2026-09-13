@@ -1,4 +1,5 @@
 require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -20,33 +21,70 @@ app.use('/api/stock', require('./routes/stock'));
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+  res.json({
+    status: 'OK',
+    timestamp: new Date().toISOString()
+  });
 });
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({ message: `Route ${req.originalUrl} not found` });
+  res.status(404).json({
+    message: `Route ${req.originalUrl} not found`
+  });
 });
 
 // Error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ message: 'Internal server error', error: err.message });
+
+  res.status(500).json({
+    message: 'Internal server error',
+    error: err.message
+  });
 });
 
-const PORT = process.env.PORT || 3001;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/stock-manager';
+const MONGO_URI =
+  process.env.MONGO_URI ||
+  'mongodb://127.0.0.1:27017/stock-manager';
 
-mongoose
-  .connect(MONGO_URI)
-  .then(async () => {
-    console.log('✓ Connected to MongoDB:', MONGO_URI);
-    await seedDatabase();
-    app.listen(PORT, () => {
-      console.log(`✓ Server running at http://localhost:${PORT}`);
+// Connect to MongoDB
+let cachedConnection = null;
+
+async function connectDB() {
+  if (cachedConnection) {
+    return cachedConnection;
+  }
+
+  cachedConnection = mongoose
+    .connect(MONGO_URI)
+    .then(async () => {
+      console.log('✓ Connected to MongoDB');
+
+      await seedDatabase();
+
+      return mongoose.connection;
+    })
+    .catch(err => {
+      console.error('✗ MongoDB connection error:', err.message);
+
+      cachedConnection = null;
+
+      throw err;
     });
-  })
-  .catch(err => {
-    console.error('✗ MongoDB connection error:', err.message);
-    process.exit(1);
-  });
+
+  return cachedConnection;
+}
+
+// Connect database before handling requests
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+// IMPORTANT: Export app for Vercel
+module.exports = app;
