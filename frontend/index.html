@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="description" content="StockPro - Simple Warehouse Stock Management for Wholesale Business" />
+    <meta name="theme-color" content="#0f172a" />
+    <title>StockPro — Warehouse Manager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <meta name="color-scheme" content="dark light" />
+    <script>
+      // Prevent flash of unstyled content for theme
+      (function () {
+        const theme = localStorage.getItem('theme');
+        if (theme) {
+          document.querySelector('meta[name="color-scheme"]').content = theme;
+          document.documentElement.setAttribute('data-theme', theme === 'light' ? 'light' : 'dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
