@@ -12,6 +12,49 @@ app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const MONGO_URI =
+  process.env.MONGO_URI ||
+  'mongodb://127.0.0.1:27017/stock-manager';
+
+// Connect to MongoDB
+let isSeeded = false;
+
+async function connectDB() {
+  if (mongoose.connection.readyState === 1) {
+    return mongoose.connection;
+  }
+
+  await mongoose.connect(MONGO_URI, {
+    serverSelectionTimeoutMS: 5000,
+  });
+  console.log('✓ Connected to MongoDB');
+
+  if (!isSeeded) {
+    isSeeded = true;
+    try {
+      await seedDatabase();
+    } catch (err) {
+      console.error('Seed error:', err.message);
+    }
+  }
+
+  return mongoose.connection;
+}
+
+// Connect database BEFORE handling routes
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error('Database connection failed:', error.message);
+    res.status(500).json({
+      message: 'Database connection failed',
+      error: error.message,
+    });
+  }
+});
+
 // Routes
 app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/transactions', require('./routes/transactions'));
@@ -23,14 +66,14 @@ app.use('/api/stock', require('./routes/stock'));
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'OK',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({
-    message: `Route ${req.originalUrl} not found`
+    message: `Route ${req.originalUrl} not found`,
   });
 });
 
@@ -40,51 +83,21 @@ app.use((err, req, res, next) => {
 
   res.status(500).json({
     message: 'Internal server error',
-    error: err.message
+    error: err.message,
   });
 });
 
-const MONGO_URI =
-  process.env.MONGO_URI ||
-  'mongodb://127.0.0.1:27017/stock-manager';
+const PORT = process.env.PORT || 3001;
 
-// Connect to MongoDB
-let cachedConnection = null;
-
-async function connectDB() {
-  if (cachedConnection) {
-    return cachedConnection;
-  }
-
-  cachedConnection = mongoose
-    .connect(MONGO_URI)
-    .then(async () => {
-      console.log('✓ Connected to MongoDB');
-
-      await seedDatabase();
-
-      return mongoose.connection;
-    })
-    .catch(err => {
-      console.error('✗ MongoDB connection error:', err.message);
-
-      cachedConnection = null;
-
-      throw err;
+if (require.main === module) {
+  connectDB().then(() => {
+    app.listen(PORT, () => {
+      console.log(`🚀 Server listening on port ${PORT}`);
     });
-
-  return cachedConnection;
+  }).catch(err => {
+    console.error('Failed to connect DB & start server:', err);
+  });
 }
-
-// Connect database before handling requests
-app.use(async (req, res, next) => {
-  try {
-    await connectDB();
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
 
 // IMPORTANT: Export app for Vercel
 module.exports = app;

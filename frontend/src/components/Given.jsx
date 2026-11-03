@@ -326,7 +326,7 @@ export default function Given({ showToast }) {
 
                 <div className="form-group">
                   <label className="form-label" htmlFor="gv-qty">Quantity (Bags)</label>
-                  <input id="gv-qty" type="number" className="form-input" placeholder="0" min="1"
+                  <input id="gv-qty" type="tel" className="form-input" placeholder="0" min="1"
                     value={giveForm.quantity}
                     onChange={e => setGiveForm(f => ({ ...f, quantity: e.target.value }))}
                     required />
@@ -340,14 +340,14 @@ export default function Given({ showToast }) {
                 <div className="form-row-2">
                   <div className="form-group">
                     <label className="form-label" htmlFor="gv-price">Selling Price (₹)</label>
-                    <input id="gv-price" type="number" className="form-input" placeholder="0" min="0" step="0.01"
+                    <input id="gv-price" type="tel" className="form-input" placeholder="0" min="0" step="0.01"
                       value={giveForm.selling_price}
                       onChange={e => setGiveForm(f => ({ ...f, selling_price: e.target.value }))}
                       required />
                   </div>
                   <div className="form-group">
                     <label className="form-label" htmlFor="gv-discount">Discount %</label>
-                    <input id="gv-discount" type="number" className="form-input" placeholder="0" min="0" max="99" step="0.1"
+                    <input id="gv-discount" type="tel" className="form-input" placeholder="0" min="0" max="99" step="0.1"
                       value={giveForm.discount_percent}
                       onChange={e => setGiveForm(f => ({ ...f, discount_percent: e.target.value }))} />
                   </div>
@@ -431,8 +431,8 @@ export default function Given({ showToast }) {
                   </select>
                   {transferForm.from_warehouse_id && transferForm.to_warehouse_id &&
                     transferForm.from_warehouse_id === transferForm.to_warehouse_id && (
-                    <div className="form-error">⚠ Cannot transfer to same warehouse</div>
-                  )}
+                      <div className="form-error">⚠ Cannot transfer to same warehouse</div>
+                    )}
                 </div>
 
                 <div className="form-group">

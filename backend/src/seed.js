@@ -3,19 +3,17 @@ const ProductSize = require('./models/ProductSize');
 const Warehouse = require('./models/Warehouse');
 
 const PRODUCTS = [
-  'Bhagwati Besan',
   'Gaay Besan',
   'Jadu Besan',
-  '1962 Besan',
   'Super Besan',
   'Deluxe Besan',
   'Soji',
+  'Deluxe Maido',
+  'Tanduri Atta'
 ];
 
 const SIZES = [
-  { size: '10 KG', purchase: 400, selling: 450, discount: 2 },
   { size: '30 KG', purchase: 1200, selling: 1300, discount: 2 },
-  { size: '50 KG', purchase: 2000, selling: 2150, discount: 2 },
 ];
 
 const WAREHOUSES = ['Warehouse 1', 'Warehouse 2', 'Warehouse 3'];

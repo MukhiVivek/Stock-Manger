@@ -263,7 +263,7 @@ export default function Received({ showToast }) {
                 <label className="form-label" htmlFor="rx-qty">Quantity (Bags)</label>
                 <input
                   id="rx-qty"
-                  type="number"
+                  type="tel"
                   className="form-input"
                   placeholder="0"
                   min="1"
@@ -278,7 +278,7 @@ export default function Received({ showToast }) {
                   <label className="form-label" htmlFor="rx-price">Purchase Price (₹)</label>
                   <input
                     id="rx-price"
-                    type="number"
+                    type="tel"
                     className="form-input"
                     placeholder="0"
                     min="0"
@@ -292,7 +292,7 @@ export default function Received({ showToast }) {
                   <label className="form-label" htmlFor="rx-discount">Discount %</label>
                   <input
                     id="rx-discount"
-                    type="number"
+                    type="tel"
                     className="form-input"
                     placeholder="0"
                     min="0"
